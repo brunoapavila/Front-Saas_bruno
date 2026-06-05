@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Zappé — Seu assistente inteligente para pedidos online</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cyan: #00C2A8;
+    --cyan-dark: #009E89;
+    --cyan-light: #E0F9F6;
+    --cyan-mid: #4DD9C8;
+    --navy: #050D1F;
+    --navy2: #0B1830;
+    --navy3: #112040;
+    --navy4: #1A3260;
+    --electric: #3B82F6;
+    --electric-light: #DBEAFE;
+    --amber: #F59E0B;
+    --pink: #EC4899;
+    --text-light: #E2E8F0;
+    --text-muted: #94A3B8;
+    --text-dim: #64748B;
+    --border: rgba(0,194,168,0.15);
+    --card-bg: rgba(17,32,64,0.6);
+    --ff-head: 'Syne', sans-serif;
+    --ff-body: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--navy);
+    color: var(--text-light);
+    font-family: var(--ff-body);
+    font-size: 15px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* NOISE + GRID BACKGROUND */
+  body::before {
+    content:'';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,194,168,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 50% at 85% 80%, rgba(59,130,246,0.10) 0%, transparent 65%),
+      linear-gradient(180deg, var(--navy) 0%, var(--navy2) 100%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 5%;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    position: sticky; top: 0;
+    z-index: 100;
+    background: rgba(5,13,31,0.85);
+  }
+  .logo {
+    font-family: var(--ff-head);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+  .logo span { color: var(--cyan); }
+  .nav-links {
+    display: flex; gap: 2rem; list-style: none;
+  }
+  .nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: #fff; }
+  .nav-cta {
+    background: var(--cyan);
+    color: var(--navy);
+    border: none;
+    padding: .55rem 1.4rem;
+    border-radius: 8px;
+    font-family: var(--ff-body);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+  }
+  .nav-cta:hover { background: var(--cyan-dark); transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 6rem 5% 5rem;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,194,168,0.1);
+    border: 1px solid rgba(0,194,168,0.3);
+    color: var(--cyan);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 1.25rem;
+    letter-spacing: .04em;
+  }
+  .hero-badge::before { content: '●'; font-size: 8px; }
+  h1 {
+    font-family: var(--ff-head);
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin-bottom: 1.25rem;
+  }
+  h1 .highlight {
+    background: linear-gradient(135deg, var(--cyan) 0%, var(--electric) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    max-width: 460px;
+    margin-bottom: 2rem;
+  }
+  .hero-actions {
+    display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+  }
+  .btn-primary {
+    background: var(--cyan);
+    color: var(--navy);
+    border: none;
+    padding: .8rem 2rem;
+    border-radius: 10px;
+    font-family: var(--ff-body);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-primary:hover { background: var(--cyan-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,194,168,0.3); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-light);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: .8rem 1.8rem;
+    border-radius: 10px;
+    font-family: var(--ff-body);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+  .hero-stats {
+    display: flex; gap: 2.5rem; margin-top: 2.5rem;
+  }
+  .stat-item { }
+  .stat-num {
+    font-family: var(--ff-head);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    display: block;
+  }
+  .stat-label { font-size: 12px; color: var(--text-muted); }
+
+  /* HERO VISUAL — mockup dashboard */
+  .hero-visual {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    backdrop-filter: blur(8px);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-visual::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(0,194,168,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .mock-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+  .mock-dots { display: flex; gap: 5px; }
+  .mock-dots span {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .mock-dots span:nth-child(1) { background: #FF5F57; }
+  .mock-dots span:nth-child(2) { background: #FFBD2E; }
+  .mock-dots span:nth-child(3) { background: #28CA41; }
+  .mock-title {
+    font-size: 13px; color: var(--text-muted); font-weight: 500;
+  }
+  .mock-stats-row {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 1rem;
+  }
+  .mock-stat {
+    background: rgba(0,194,168,0.06);
+    border: 1px solid rgba(0,194,168,0.12);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .mock-stat-val {
+    font-family: var(--ff-head);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--cyan);
+    display: block;
+  }
+  .mock-stat-lbl { font-size: 11px; color: var(--text-muted); }
+  .mock-orders { }
+  .mock-order-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px;
+  }
+  .mock-order-row:last-child { border-bottom: none; }
+  .mock-avatar {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--cyan), var(--electric));
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: var(--navy);
+  }
+  .mock-order-info { flex: 1; }
+  .mock-order-name { color: #fff; font-weight: 500; font-size: 12px; }
+  .mock-order-item { color: var(--text-muted); font-size: 11px; }
+  .mock-order-price { color: var(--cyan); font-weight: 600; font-size: 13px; }
+  .mock-badge {
+    font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 100px;
+    background: rgba(0,194,168,0.15); color: var(--cyan);
+  }
+  .mock-badge.pending { background: rgba(245,158,11,0.15); color: var(--amber); }
+
+  /* FEATURES STRIP */
+  .features-strip {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 5%;
+    display: flex; gap: 2rem; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .features-strip::-webkit-scrollbar { display: none; }
+  .strip-item {
+    display: flex; align-items: center; gap: 10px;
+    white-space: nowrap; color: var(--text-muted); font-size: 14px;
+    flex-shrink: 0;
+  }
+  .strip-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(0,194,168,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+
+  /* SECTION TITLE */
+  .section { max-width: 1200px; margin: 0 auto; padding: 5rem 5%; }
+  .section-label {
+    font-size: 12px; font-weight: 600; letter-spacing: .08em;
+    color: var(--cyan); text-transform: uppercase; margin-bottom: .5rem;
+  }
+  h2 {
+    font-family: var(--ff-head);
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+  .section-sub {
+    color: var(--text-muted);
+    max-width: 520px;
+    margin-bottom: 3rem;
+  }
+
+  /* FEATURE CARDS 3-COLUMN */
+  .cards-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .feat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    backdrop-filter: blur(6px);
+    transition: border-color .2s, transform .2s;
+  }
+  .feat-card:hover { border-color: rgba(0,194,168,0.4); transform: translateY(-3px); }
+  .feat-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: linear-gradient(135deg, rgba(0,194,168,0.2), rgba(59,130,246,0.2));
+    border: 1px solid rgba(0,194,168,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; margin-bottom: 1rem;
+  }
+  .feat-card h3 {
+    font-family: var(--ff-head);
+    font-size: 1rem; font-weight: 700; color: #fff;
+    margin-bottom: .5rem;
+  }
+  .feat-card p { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+
+  /* MENU / CATALOG SECTION */
+  .menu-section { background: rgba(11,24,48,0.5); padding: 5rem 0; }
+  .menu-inner { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+  }
+  .menu-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform .2s, border-color .2s;
+    cursor: pointer;
+  }
+  .menu-card:hover { transform: translateY(-4px); border-color: rgba(0,194,168,0.4); }
+  .menu-thumb {
+    height: 110px;
+    background: linear-gradient(135deg, var(--navy3), var(--navy4));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem;
+    position: relative;
+  }
+  .menu-thumb::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at center, rgba(0,194,168,0.1), transparent 70%);
+  }
+  .menu-info { padding: 12px; }
+  .menu-name { font-weight: 600; font-size: 13px; color: #fff; margin-bottom: 3px; }
+  .menu-price { color: var(--cyan); font-weight: 700; font-size: 14px; font-family: var(--ff-head); }
+  .menu-cat { font-size: 11px; color: var(--text-muted); }
+  .menu-add {
+    display: block; width: 100%;
+    background: var(--cyan);
+    color: var(--navy);
+    border: none;
+    padding: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .menu-add:hover { background: var(--cyan-dark); }
+
+  /* HOW IT WORKS */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    counter-reset: step;
+    margin-top: 2.5rem;
+  }
+  .step-card {
+    padding: 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    counter-increment: step;
+    position: relative;
+    overflow: hidden;
+  }
+  .step-card::before {
+    content: counter(step);
+    position: absolute;
+    top: -10px; right: 12px;
+    font-family: var(--ff-head);
+    font-size: 5rem;
+    font-weight: 800;
+    color: rgba(0,194,168,0.06);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .step-num {
+    display: inline-flex;
+    width: 30px; height: 30px;
+    background: var(--cyan);
+    color: var(--navy);
+    border-radius: 8px;
+    align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px;
+    font-family: var(--ff-head);
+    margin-bottom: 1rem;
+  }
+  .step-card h3 {
+    font-family: var(--ff-head);
+    font-size: .95rem; font-weight: 700; color: #fff; margin-bottom: .4rem;
+  }
+  .step-card p { color: var(--text-muted); font-size: 13px; }
+
+  /* PLANS */
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .plan-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 2rem;
+    backdrop-filter: blur(6px);
+    display: flex; flex-direction: column;
+    transition: transform .2s;
+  }
+  .plan-card:hover { transform: translateY(-4px); }
+  .plan-card.featured {
+    border-color: var(--cyan);
+    background: rgba(0,194,168,0.05);
+    position: relative;
+  }
+  .plan-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--cyan);
+    color: var(--navy);
+    font-size: 11px; font-weight: 700;
+    padding: 4px 16px; border-radius: 100px;
+    letter-spacing: .04em; white-space: nowrap;
+  }
+  .plan-name {
+    font-family: var(--ff-head);
+    font-size: 1rem; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: .06em; margin-bottom: .75rem;
+  }
+  .plan-price {
+    font-family: var(--ff-head);
+    font-size: 2.5rem; font-weight: 800; color: #fff;
+    margin-bottom: .25rem;
+  }
+  .plan-price sup { font-size: 1rem; vertical-align: super; color: var(--text-muted); }
+  .plan-period { font-size: 13px; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .plan-features { list-style: none; flex: 1; margin-bottom: 1.5rem; }
+  .plan-features li {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; color: var(--text-light); padding: 5px 0;
+  }
+  .plan-features li::before {
+    content: '✓'; color: var(--cyan); font-weight: 700; font-size: 13px; flex-shrink: 0;
+  }
+  .plan-features li.muted::before { content: '–'; color: var(--text-dim); }
+  .plan-features li.muted { color: var(--text-dim); }
+  .plan-btn {
+    display: block; width: 100%;
+    padding: .75rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: #fff;
+    font-family: var(--ff-body);
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .plan-card.featured .plan-btn {
+    background: var(--cyan); border-color: var(--cyan); color: var(--navy);
+  }
+  .plan-btn:hover { opacity: .85; transform: translateY(-1px); }
+
+  /* CTA SECTION */
+  .cta-section {
+    max-width: 1200px; margin: 0 auto; padding: 4rem 5% 6rem;
+    text-align: center;
+  }
+  .cta-box {
+    background: linear-gradient(135deg, rgba(0,194,168,0.12), rgba(59,130,246,0.12));
+    border: 1px solid rgba(0,194,168,0.3);
+    border-radius: 24px;
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-box::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(0,194,168,0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .cta-box h2 { margin-bottom: .75rem; }
+  .cta-box p { color: var(--text-muted); margin: 0 auto 2rem; max-width: 480px; }
+  .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 5%;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+    color: var(--text-dim); font-size: 13px;
+  }
+  footer .logo { font-size: 1.1rem; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; padding: 3rem 5% 4rem; }
+    .hero-visual { display: none; }
+    .nav-links { display: none; }
+    .hero-stats { gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Za<span>pp</span>é</div>
+  <ul class="nav-links">
+    <li><a href="#features">Funcionalidades</a></li>
+    <li><a href="#cardapio">Cardápio</a></li>
+    <li><a href="#planos">Planos</a></li>
+    <li><a href="#como-funciona">Como funciona</a></li>
+  </ul>
+  <button class="nav-cta">Começar grátis</button>
+</nav>
+
+<!-- HERO -->
+<section>
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">Novo · IA para restaurantes</div>
+      <h1>Seu assistente <span class="highlight">inteligente</span> para pedidos online</h1>
+      <p>Automatize sua loja virtual, gerencie pedidos em tempo real e venda muito mais — tudo com IA que entende seu negócio.</p>
+      <div class="hero-actions">
+        <button class="btn-primary">Teste grátis por 14 dias</button>
+        <button class="btn-ghost">Ver demonstração →</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num">+2.4k</span>
+          <span class="stat-label">Lojas ativas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">98%</span>
+          <span class="stat-label">Uptime garantido</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">3× mais</span>
+          <span class="stat-label">Vendas em média</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOCKUP DASHBOARD -->
+    <div class="hero-visual">
+      <div class="mock-topbar">
+        <div class="mock-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <span class="mock-title">Zappé dashboard</span>
+        <span style="font-size:11px;color:var(--cyan);font-weight:600;">● Ao vivo</span>
+      </div>
+      <div class="mock-stats-row">
+        <div class="mock-stat">
+          <span class="mock-stat-val">R$ 3.240</span>
+          <span class="mock-stat-lbl">Hoje</span>
+        </div>
+        <div class="mock-stat">
+          <span class="mock-stat-val">47</span>
+          <span class="mock-stat-lbl">Pedidos</span>
+        </div>
+        <div class="mock-stat">
+          <span class="mock-stat-val">4.8 ★</span>
+          <span class="mock-stat-lbl">Avaliação</span>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Pedidos recentes</div>
+      <div class="mock-orders">
+        <div class="mock-order-row">
+          <div class="mock-avatar">AV</div>
+          <div class="mock-order-info">
+            <div class="mock-order-name">Ana Vitória</div>
+            <div class="mock-order-item">X-Burguer + Batata P</div>
+          </div>
+          <div>
+            <div class="mock-order-price">R$ 42,00</div>
+            <div class="mock-badge">Entregue</div>
+          </div>
+        </div>
+        <div class="mock-order-row">
+          <div class="mock-avatar" style="background:linear-gradient(135deg,#3B82F6,#8B5CF6)">RM</div>
+          <div class="mock-order-info">
+            <div class="mock-order-name">Rafael M.</div>
+            <div class="mock-order-item">Combo Família × 2</div>
+          </div>
+          <div>
+            <div class="mock-order-price">R$ 89,90</div>
+            <div class="mock-badge pending">Preparo</div>
+          </div>
+        </div>
+        <div class="mock-order-row">
+          <div class="mock-avatar" style="background:linear-gradient(135deg,#F59E0B,#EF4444)">CS</div>
+          <div class="mock-order-info">
+            <div class="mock-order-name">Carla S.</div>
+            <div class="mock-order-item">Pizza Margherita G</div>
+          </div>
+          <div>
+            <div class="mock-order-price">R$ 62,00</div>
+            <div class="mock-badge">Entregue</div>
+          </div>
+        </div>
+        <div class="mock-order-row">
+          <div class="mock-avatar" style="background:linear-gradient(135deg,#EC4899,#8B5CF6)">LF</div>
+          <div class="mock-order-info">
+            <div class="mock-order-name">Lucas F.</div>
+            <div class="mock-order-item">Açaí 500ml + Granola</div>
+          </div>
+          <div>
+            <div class="mock-order-price">R$ 28,50</div>
+            <div class="mock-badge pending">Preparo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRIP -->
+<div class="features-strip">
+  <div class="strip-item"><div class="strip-icon">🤖</div> IA para atendimento automático</div>
+  <div class="strip-item"><div class="strip-icon">📦</div> Gestão de pedidos em tempo real</div>
+  <div class="strip-item"><div class="strip-icon">🛒</div> Loja virtual integrada</div>
+  <div class="strip-item"><div class="strip-icon">💳</div> Pagamentos sem taxa extra</div>
+  <div class="strip-item"><div class="strip-icon">📊</div> Relatórios e analytics</div>
+  <div class="strip-item"><div class="strip-icon">🚚</div> Integração com entregadores</div>
+  <div class="strip-item"><div class="strip-icon">⚡</div> Setup em menos de 5 minutos</div>
+</div>
+
+<!-- FEATURES -->
+<section id="features" class="section">
+  <div class="section-label">Funcionalidades</div>
+  <h2>Tudo que sua loja precisa,<br>em um só lugar</h2>
+  <p class="section-sub">Do cardápio digital ao controle de entregas, a Zappé centraliza toda a operação do seu negócio.</p>
+  <div class="cards-3">
+    <div class="feat-card">
+      <div class="feat-icon">🤖</div>
+      <h3>Cardápio digital com IA</h3>
+      <p>Monte seu cardápio com fotos, descrições e preços. A IA sugere combos e upsells automáticos para aumentar o ticket médio.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">⚡</div>
+      <h3>Pedidos em tempo real</h3>
+      <p>Receba e gerencie pedidos ao vivo com notificações instantâneas. Nunca mais perca uma venda por falta de resposta.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">💬</div>
+      <h3>Atendimento automático</h3>
+      <p>Chatbot inteligente que responde dúvidas, confirma pedidos e envia status de entrega sem intervenção humana.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📊</div>
+      <h3>Dashboard completo</h3>
+      <p>Acompanhe vendas, produtos mais pedidos, horários de pico e muito mais em painéis fáceis de entender.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🚚</div>
+      <h3>Gestão de entregas</h3>
+      <p>Integre com motoboys próprios ou parceiros. Rastreamento em tempo real com mapa interativo para o cliente.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">💳</div>
+      <h3>Pagamentos integrados</h3>
+      <p>Pix, cartão, dinheiro e voucher — tudo numa tela. Repasse automático sem taxas escondidas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MENU / CATALOG -->
+<div id="cardapio" class="menu-section">
+  <div class="menu-inner">
+    <div class="section-label">Cardápio digital</div>
+    <h2>Monte seu cardápio em minutos</h2>
+    <p class="section-sub" style="margin-bottom:0">Importe, edite e publique seu cardápio com fotos e categorias. Seu cliente vê o mais bonito da região.</p>
+    <div class="menu-grid">
+      <div class="menu-card">
+        <div class="menu-thumb">🍔</div>
+        <div class="menu-info">
+          <div class="menu-cat">Lanches</div>
+          <div class="menu-name">X-Burguer Artesanal</div>
+          <div class="menu-price">R$ 32,90</div>
+        </div>
+        <button class="menu-add">+ Adicionar</button>
+      </div>
+      <div class="menu-card">
+        <div class="menu-thumb">🍕</div>
+        <div class="menu-info">
+          <div class="menu-cat">Pizzas</div>
+          <div class="menu-name">Pizza Margherita G</div>
+          <div class="menu-price">R$ 55,00</div>
+        </div>
+        <button class="menu-add">+ Adicionar</button>
+      </div>
+      <div class="menu-card">
+        <div class="menu-thumb">🥗</div>
+        <div class="menu-info">
+          <div class="menu-cat">Saudável</div>
+          <div class="menu-name">Bowl Proteico</div>
+          <div class="menu-price">R$ 28,90</div>
+        </div>
+        <button class="menu-add">+ Adicionar</button>
+      </div>
+      <div class="menu-card">
+        <div class="menu-thumb">🍜</div>
+        <div class="menu-info">
+          <div class="menu-cat">Massas</div>
+          <div class="menu-name">Espaguete Carbonara</div>
+          <div class="menu-price">R$ 48,00</div>
+        </div>
+        <button class="menu-add">+ Adicionar</button>
+      </div>
+      <div class="menu-card">
+        <div class="menu-thumb">🍦</div>
+        <div class="menu-info">
+          <div class="menu-cat">Sobremesas</div>
+          <div class="menu-name">Açaí 500ml</div>
+          <div class="menu-price">R$ 22,50</div>
+        </div>
+        <button class="menu-add">+ Adicionar</button>
+      </div>
+      <div class="menu-card">
+        <div class="menu-thumb">🥤</div>
+        <div class="menu-info">
+          <div class="menu-cat">Bebidas</div>
+          <div class="menu-name">Suco Natural 500ml</div>
+          <div class="menu-price">R$ 14,00</div>
+        </div>
+        <button class="menu-add">+ Adicionar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="como-funciona" class="section">
+  <div class="section-label">Como funciona</div>
+  <h2>Do cadastro à primeira venda<br>em menos de 1 hora</h2>
+  <p class="section-sub">Configuração rápida, sem necessidade de conhecimento técnico.</p>
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <h3>Crie sua conta</h3>
+      <p>Cadastro em 2 minutos com CNPJ ou CPF. Nenhuma instalação necessária.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <h3>Monte o cardápio</h3>
+      <p>Adicione produtos, fotos e preços. Importe de planilhas ou via foto com IA.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <h3>Compartilhe o link</h3>
+      <p>Receba seu link personalizado e compartilhe no WhatsApp, Instagram e Google.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <h3>Venda e cresça</h3>
+      <p>Receba pedidos, gerencie entregas e use os relatórios para vender cada vez mais.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section id="planos" class="section" style="padding-top:0">
+  <div class="section-label">Planos</div>
+  <h2>Simples e sem surpresas</h2>
+  <p class="section-sub">Cancele quando quiser. Sem taxa de setup. Sem fidelidade.</p>
+  <div class="plans">
+    <div class="plan-card">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price"><sup>R$</sup>0</div>
+      <div class="plan-period">por mês, para sempre</div>
+      <ul class="plan-features">
+        <li>1 loja virtual</li>
+        <li>Até 30 produtos</li>
+        <li>Pedidos ilimitados</li>
+        <li>Dashboard básico</li>
+        <li class="muted">IA de atendimento</li>
+        <li class="muted">Relatórios avançados</li>
+        <li class="muted">Integrações externas</li>
+      </ul>
+      <button class="plan-btn">Começar de graça</button>
+    </div>
+    <div class="plan-card featured">
+      <div class="plan-badge">Mais popular</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price"><sup>R$</sup>149</div>
+      <div class="plan-period">por mês por loja</div>
+      <ul class="plan-features">
+        <li>Lojas ilimitadas</li>
+        <li>Produtos ilimitados</li>
+        <li>Pedidos ilimitados</li>
+        <li>IA de atendimento 24/7</li>
+        <li>Relatórios avançados</li>
+        <li>Integração iFood / Rappi</li>
+        <li>Suporte prioritário</li>
+      </ul>
+      <button class="plan-btn">Testar 14 dias grátis</button>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price" style="font-size:1.8rem">Sob consulta</div>
+      <div class="plan-period">para redes e franquias</div>
+      <ul class="plan-features">
+        <li>Tudo do Pro</li>
+        <li>Multi-unidades</li>
+        <li>API dedicada</li>
+        <li>SLA garantido 99.9%</li>
+        <li>Onboarding dedicado</li>
+        <li>Gestor de conta exclusivo</li>
+        <li>Relatórios personalizados</li>
+      </ul>
+      <button class="plan-btn">Falar com especialista</button>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-box">
+    <div class="section-label" style="margin-bottom:.75rem">Pronto para começar?</div>
+    <h2>Comece a vender mais hoje mesmo</h2>
+    <p>Junte-se a mais de 2.400 lojistas que já transformaram suas vendas com a Zappé. Sem cartão de crédito.</p>
+    <div class="cta-actions">
+      <button class="btn-primary">Criar conta grátis</button>
+      <button class="btn-ghost">Falar com vendas →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Za<span>pp</span>é</div>
+  <span>© 2025 Zappé. Todos os direitos reservados.</span>
+  <div style="display:flex;gap:1.5rem">
+    <a href="#" style="color:var(--text-dim);text-decoration:none;font-size:13px">Termos</a>
+    <a href="#" style="color:var(--text-dim);text-decoration:none;font-size:13px">Privacidade</a>
+    <a href="#" style="color:var(--text-dim);text-decoration:none;font-size:13px">Suporte</a>
+  </div>
+</footer>
+
+</body>
+</html>
