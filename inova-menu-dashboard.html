@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inova Menu — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#fff8f0;
+  --cream2:#fff2e4;
+  --white:#ffffff;
+  --orange:#e85d1a;
+  --orange-hover:#d44f0f;
+  --orange-light:#fff0e8;
+  --brown:#7a4a2a;
+  --dark:#1a1008;
+  --text:#3a2010;
+  --text-mid:#7a5030;
+  --text-dim:#b08060;
+  --border:#f0d8c0;
+  --border2:#e8ccb0;
+  --surface:#fffcf8;
+  --green:#1a9e58;
+  --green-light:#e8f5ee;
+  --amber:#c08010;
+  --amber-light:#fff8e8;
+  --red:#cc3030;
+  --red-light:#fff0f0;
+  --blue:#2060c0;
+  --blue-light:#e8f0ff;
+  --font-head:'Playfair Display',serif;
+  --font-body:'Plus Jakarta Sans',sans-serif;
+  --sidebar:228px;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--cream);color:var(--text);font-family:var(--font-body);font-size:14px;display:flex}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;height:100vh;overflow-y:auto}
+.sidebar-logo{padding:20px 18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.logo-icon{width:34px;height:34px;border-radius:10px;background:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-text{font-family:var(--font-head);font-weight:800;font-size:17px;color:var(--dark)}
+.logo-text span{color:var(--orange)}
+.sidebar-section{padding:18px 14px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text-mid);margin:1px 6px;transition:all .15s;text-decoration:none}
+.nav-item:hover{background:var(--cream);color:var(--text)}
+.nav-item.active{background:var(--orange-light);color:var(--orange);font-weight:600}
+.nav-icon{width:18px;text-align:center;font-size:15px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--orange);color:var(--white);font-size:10px;font-weight:700;border-radius:10px;padding:1px 7px}
+.nav-badge.warn{background:var(--amber)}
+.sidebar-footer{margin-top:auto;padding:14px;border-top:1px solid var(--border)}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px;background:var(--cream);border-radius:10px;border:1px solid var(--border)}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:var(--orange-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--orange);flex-shrink:0}
+.user-name{font-size:12px;font-weight:600;color:var(--dark)}
+.user-role{font-size:11px;color:var(--text-dim)}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;height:100vh;display:flex;flex-direction:column;background:var(--cream)}
+
+/* TOPBAR */
+.topbar{padding:14px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--white)}
+.topbar-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--dark)}
+.topbar-sub{font-size:11px;color:var(--text-dim);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tb-btn{padding:8px 16px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:transparent;color:var(--text-mid);font-family:var(--font-body);transition:all .15s}
+.tb-btn:hover{border-color:var(--orange);color:var(--orange)}
+.tb-btn.primary{background:var(--orange);border-color:var(--orange);color:var(--white)}
+.tb-btn.primary:hover{background:var(--orange-hover)}
+.notif{width:36px;height:36px;border-radius:100px;border:1.5px solid var(--border2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;transition:all .15s}
+.notif:hover{border-color:var(--orange)}
+.notif-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;background:var(--red);border-radius:50%;border:1.5px solid var(--white)}
+
+/* CONTENT */
+.content{padding:20px 24px;flex:1}
+
+/* KPIs */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px 18px;transition:all .2s;cursor:default}
+.kpi:hover{border-color:var(--border2);box-shadow:0 4px 20px rgba(232,93,26,.05)}
+.kpi-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
+.kpi-val{font-family:var(--font-head);font-size:26px;font-weight:800;line-height:1;color:var(--dark);margin-bottom:6px}
+.kpi-val.orange{color:var(--orange)}
+.kpi-delta{font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px}
+.d-up{color:var(--green)}.d-down{color:var(--red)}.d-neutral{color:var(--text-dim)}
+
+/* GRID MIDDLE */
+.mid-row{display:grid;grid-template-columns:1.7fr 1fr;gap:12px;margin-bottom:18px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px 18px}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--dark)}
+.card-link{font-size:11px;color:var(--orange);cursor:pointer;font-weight:600}
+
+/* BARS */
+.bars{display:flex;align-items:flex-end;gap:7px;height:90px}
+.bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.b{width:100%;border-radius:4px 4px 0 0;cursor:pointer;transition:opacity .15s}
+.b:hover{opacity:.8}
+.bl{font-size:9px;color:var(--text-dim)}
+.bv{font-size:9px;color:var(--text-dim)}
+
+/* DONUT */
+.donut-row{display:flex;align-items:center;gap:18px}
+.legend{display:flex;flex-direction:column;gap:7px;flex:1}
+.li{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-mid)}
+.ld{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.lv{margin-left:auto;font-weight:700;font-family:var(--font-head);font-size:13px}
+
+/* BOTTOM ROW */
+.bot-row{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:12px}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:0 0 10px;font-weight:600;border-bottom:1px solid var(--border)}
+.tbl td{padding:8px 0;border-bottom:1px solid var(--border);color:var(--text-mid)}
+.tbl tr:last-child td{border-bottom:none}
+.onum{color:var(--text-dim);font-size:11px}
+.opill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px}
+.p-ok{background:var(--green-light);color:var(--green)}
+.p-prep{background:var(--orange-light);color:var(--orange)}
+.p-wait{background:var(--amber-light);color:var(--amber)}
+.p-cancel{background:var(--red-light);color:var(--red)}
+.pdot{width:5px;height:5px;border-radius:50%;background:currentColor}
+
+/* ESTOQUE */
+.si{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.si:last-child{border-bottom:none}
+.si-em{font-size:14px}
+.si-name{flex:1;font-size:12px;color:var(--text)}
+.si-qty{font-size:11px;color:var(--text-dim);margin-right:6px}
+.si-bar{width:50px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.si-fill{height:100%;border-radius:2px}
+.si-badge{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.sb-alert{background:var(--red-light);color:var(--red)}
+.sb-warn{background:var(--amber-light);color:var(--amber)}
+.sb-ok{background:var(--green-light);color:var(--green)}
+
+/* ATIVIDADE */
+.ai{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.ai:last-child{border-bottom:none}
+.ai-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:1px}
+.ai-g{background:var(--green-light)}.ai-a{background:var(--amber-light)}.ai-r{background:var(--red-light)}.ai-b{background:var(--blue-light)}
+.ai-text{font-size:12px;color:var(--text-mid);line-height:1.5}
+.ai-time{font-size:10px;color:var(--text-dim);margin-top:2px}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9h3l2-5 3 10 2-5h2" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="logo-text">Inova<span>Menu</span></div>
+  </div>
+
+  <div class="sidebar-section">Principal</div>
+  <a class="nav-item active"><span class="nav-icon">⊞</span> Dashboard</a>
+  <a class="nav-item"><span class="nav-icon">🛒</span> Pedidos <span class="nav-badge">5</span></a>
+  <a class="nav-item"><span class="nav-icon">🍽️</span> Cardápio</a>
+  <a class="nav-item"><span class="nav-icon">📺</span> KDS Cozinha</a>
+
+  <div class="sidebar-section">Gestão</div>
+  <a class="nav-item"><span class="nav-icon">💰</span> Financeiro</a>
+  <a class="nav-item"><span class="nav-icon">📦</span> Estoque <span class="nav-badge warn">!</span></a>
+  <a class="nav-item"><span class="nav-icon">👥</span> Clientes</a>
+  <a class="nav-item"><span class="nav-icon">📣</span> Marketing</a>
+
+  <div class="sidebar-section">Relatórios</div>
+  <a class="nav-item"><span class="nav-icon">📊</span> Análises</a>
+  <a class="nav-item"><span class="nav-icon">🧾</span> Fiscal / NFC-e</a>
+
+  <div class="sidebar-section">Config</div>
+  <a class="nav-item"><span class="nav-icon">⚙️</span> Configurações</a>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">MF</div>
+      <div><div class="user-name">Marcos Ferreira</div><div class="user-role">Administrador</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Dashboard</div>
+      <div class="topbar-sub">Segunda-feira, 02 de junho de 2026 · Caixa aberto desde 10:30</div>
+    </div>
+    <div class="topbar-right">
+      <button class="tb-btn">📥 Exportar</button>
+      <button class="tb-btn">📅 Hoje</button>
+      <button class="notif">🔔<span class="notif-dot"></span></button>
+      <button class="tb-btn primary">+ Novo pedido</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- KPIs -->
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Faturamento hoje</div>
+        <div class="kpi-val orange">R$ 1.847</div>
+        <div class="kpi-delta d-up">▲ 12% vs ontem</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Pedidos</div>
+        <div class="kpi-val">47</div>
+        <div class="kpi-delta d-up">▲ 8 pedidos</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Ticket médio</div>
+        <div class="kpi-val">R$ 39</div>
+        <div class="kpi-delta d-neutral">→ estável</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">CMV do dia</div>
+        <div class="kpi-val">31%</div>
+        <div class="kpi-delta d-down">▼ meta: 30%</div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="mid-row">
+      <div class="card">
+        <div class="card-head"><span class="card-title">Faturamento — últimos 7 dias</span><span class="card-link">Ver relatório →</span></div>
+        <div class="bars" id="bars"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">Pedidos por canal</span><span class="card-link">Detalhes →</span></div>
+        <div class="donut-row">
+          <svg width="82" height="82" viewBox="0 0 82 82">
+            <circle cx="41" cy="41" r="30" fill="none" stroke="#f0d8c0" stroke-width="14"/>
+            <circle cx="41" cy="41" r="30" fill="none" stroke="#e85d1a" stroke-width="14" stroke-dasharray="113 75" stroke-dashoffset="23" transform="rotate(-90 41 41)"/>
+            <circle cx="41" cy="41" r="30" fill="none" stroke="#1a9e58" stroke-width="14" stroke-dasharray="56 132" stroke-dashoffset="-90" transform="rotate(-90 41 41)"/>
+            <circle cx="41" cy="41" r="30" fill="none" stroke="#c08010" stroke-width="14" stroke-dasharray="19 169" stroke-dashoffset="-146" transform="rotate(-90 41 41)"/>
+            <text x="41" y="38" text-anchor="middle" font-size="13" font-weight="700" font-family="Playfair Display" fill="#1a1008">47</text>
+            <text x="41" y="51" text-anchor="middle" font-size="9" fill="#b08060">pedidos</text>
+          </svg>
+          <div class="legend">
+            <div class="li"><div class="ld" style="background:#e85d1a"></div>WhatsApp<span class="lv" style="color:#e85d1a">60%</span></div>
+            <div class="li"><div class="ld" style="background:#1a9e58"></div>Delivery<span class="lv" style="color:#1a9e58">30%</span></div>
+            <div class="li"><div class="ld" style="background:#c08010"></div>Balcão<span class="lv" style="color:#c08010">10%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM -->
+    <div class="bot-row">
+      <div class="card">
+        <div class="card-head"><span class="card-title">Pedidos recentes</span><span class="card-link">Ver todos →</span></div>
+        <table class="tbl">
+          <thead><tr><th>Pedido</th><th>Itens</th><th>Valor</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><span class="onum">#0047</span></td><td>2x Pizza, 1x Suco</td><td style="font-weight:700;color:var(--dark)">R$ 72</td><td><span class="opill p-ok"><span class="pdot"></span>Entregue</span></td></tr>
+            <tr><td><span class="onum">#0046</span></td><td>1x X-Burguer, 2x Batata</td><td style="font-weight:700;color:var(--dark)">R$ 54</td><td><span class="opill p-prep"><span class="pdot"></span>Preparo</span></td></tr>
+            <tr><td><span class="onum">#0045</span></td><td>3x Açaí 500ml</td><td style="font-weight:700;color:var(--dark)">R$ 63</td><td><span class="opill p-wait"><span class="pdot"></span>Aguardando</span></td></tr>
+            <tr><td><span class="onum">#0044</span></td><td>1x Prato Feito Esp.</td><td style="font-weight:700;color:var(--dark)">R$ 28</td><td><span class="opill p-ok"><span class="pdot"></span>Entregue</span></td></tr>
+            <tr><td><span class="onum">#0043</span></td><td>2x Pastel, 2x Caldo</td><td style="font-weight:700;color:var(--dark)">R$ 36</td><td><span class="opill p-cancel"><span class="pdot"></span>Cancelado</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="card-title">Estoque crítico</span><span class="card-link">Gerenciar →</span></div>
+        <div class="si"><div class="si-em">🧀</div><div class="si-name">Queijo mussarela</div><div class="si-qty">1,2kg</div><div class="si-bar"><div class="si-fill" style="width:15%;background:#cc3030"></div></div><span class="si-badge sb-alert">Crítico</span></div>
+        <div class="si"><div class="si-em">🍖</div><div class="si-name">Carne hambúrguer</div><div class="si-qty">2,5kg</div><div class="si-bar"><div class="si-fill" style="width:25%;background:#c08010"></div></div><span class="si-badge sb-warn">Baixo</span></div>
+        <div class="si"><div class="si-em">🥤</div><div class="si-name">Açaí base 1L</div><div class="si-qty">8 un</div><div class="si-bar"><div class="si-fill" style="width:40%;background:#c08010"></div></div><span class="si-badge sb-warn">Baixo</span></div>
+        <div class="si"><div class="si-em">🍞</div><div class="si-name">Pão hambúrguer</div><div class="si-qty">24 un</div><div class="si-bar"><div class="si-fill" style="width:60%;background:#1a9e58"></div></div><span class="si-badge sb-ok">Ok</span></div>
+        <div class="si"><div class="si-em">🧴</div><div class="si-name">Óleo de soja 900ml</div><div class="si-qty">6 un</div><div class="si-bar"><div class="si-fill" style="width:75%;background:#1a9e58"></div></div><span class="si-badge sb-ok">Ok</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="card-title">Atividade recente</span></div>
+        <div class="ai"><div class="ai-icon ai-g">🛒</div><div><div class="ai-text">Pedido #0047 entregue com sucesso</div><div class="ai-time">há 3 min</div></div></div>
+        <div class="ai"><div class="ai-icon ai-a">⚠️</div><div><div class="ai-text">Estoque de queijo abaixo do mínimo</div><div class="ai-time">há 18 min</div></div></div>
+        <div class="ai"><div class="ai-icon ai-g">💰</div><div><div class="ai-text">Pix confirmado — R$ 54,00</div><div class="ai-time">há 22 min</div></div></div>
+        <div class="ai"><div class="ai-icon ai-b">🧾</div><div><div class="ai-text">NFC-e emitida — cupom #0044</div><div class="ai-time">há 35 min</div></div></div>
+        <div class="ai"><div class="ai-icon ai-r">✗</div><div><div class="ai-text">Pedido #0043 cancelado pelo cliente</div><div class="ai-time">há 41 min</div></div></div>
+        <div class="ai"><div class="ai-icon ai-g">📣</div><div><div class="ai-text">Cupom VOLTA10 usado por Ana S.</div><div class="ai-time">há 1h</div></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const data=[
+  {d:'Seg',v:980,h:50},{d:'Ter',v:1240,h:63},{d:'Qua',v:1580,h:80},
+  {d:'Qui',v:1120,h:57},{d:'Sex',v:2100,h:100},{d:'Sáb',v:1890,h:90},{d:'Dom',v:1847,h:88}
+];
+const c=document.getElementById('bars');
+data.forEach((item,i)=>{
+  const w=document.createElement('div');w.className='bw';
+  const vl=document.createElement('div');vl.className='bv';vl.textContent='R$'+Math.round(item.v/100)/10+'k';
+  const b=document.createElement('div');b.className='b';
+  b.style.height=item.h+'%';
+  b.style.background=i===6?'#e85d1a':'#f0d8c0';
+  b.style.border=i===6?'none':'1px solid #e8ccb0';
+  const l=document.createElement('div');l.className='bl';l.textContent=item.d;
+  w.appendChild(vl);w.appendChild(b);w.appendChild(l);c.appendChild(w);
+});
+</script>
+</body>
+</html>
